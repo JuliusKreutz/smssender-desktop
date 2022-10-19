@@ -1,0 +1,7 @@
+.gradle/
+.idea/
+build/
+
+**/version.txt
+
+smssender-desktop.iml

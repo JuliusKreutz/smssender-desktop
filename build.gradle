@@ -1,0 +1,57 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.beryx.jlink' version '2.25.0'
+    id 'com.palantir.git-version' version '0.15.0'
+}
+
+group 'dev.kreutz.smssender.desktop'
+version versionDetails().lastTag
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+application {
+    mainModule = 'dev.kreutz.smssender.desktop'
+    mainClass = 'dev.kreutz.smssender.desktop.Main'
+}
+
+javafx {
+    version = '17.0.2'
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
+dependencies {
+    implementation 'com.github.JuliusKreutz:smssender-shared:1.0'
+    implementation 'io.github.palexdev:materialfx:11.13.5'
+}
+
+jlink {
+    imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher {
+        name = 'SmsSender'
+    }
+    mergedModule {
+        additive = true
+        requires 'jdk.crypto.ec'
+    }
+    addExtraDependencies('javafx')
+
+    jpackage {
+        installerType = 'msi'
+        imageOptions = ['--icon', 'icon.ico']
+        installerOptions = ['--win-per-user-install', '--win-menu', '--win-shortcut', '--win-upgrade-uuid', UUID.randomUUID()]
+    }
+}
+
+processResources {
+    doFirst {
+        new File("$projectDir/src/main/resources/dev/kreutz/smssender/desktop/version.txt").write(version)
+    }
+}

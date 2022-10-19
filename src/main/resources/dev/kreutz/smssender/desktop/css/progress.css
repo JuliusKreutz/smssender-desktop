@@ -1,0 +1,11 @@
+#bar:range1 .bar1 {
+    -fx-fill: #ef6e6b;
+}
+
+#bar:range2 .bar1 {
+    -fx-fill: #ffea00;
+}
+
+#bar:range3 .bar1 {
+    -fx-fill: #4caf50;
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXProgressBar?>
+<?import io.github.palexdev.materialfx.controls.MFXRadioButton?>
+
+<MFXRadioButton fx:id="button" contentDisplay="BOTTOM" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.kreutz.smssender.desktop.PhoneButtonController">
+   <graphic>
+      <MFXProgressBar id="bar" fx:id="bar" progress="0.0" stylesheets="@../css/progress.css" />
+   </graphic>
+</MFXRadioButton>
