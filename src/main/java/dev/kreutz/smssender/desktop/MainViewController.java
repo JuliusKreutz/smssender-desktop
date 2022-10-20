@@ -70,7 +70,7 @@ public class MainViewController implements Initializable {
 
                     Platform.runLater(() -> {
                         controller.button.setText(phone.getName());
-                        controller.button.setOnMouseClicked(e -> {
+                        controller.button.setOnAction(e -> {
                             if (selected != null) phoneControllers.get(selected).button.setSelected(false);
                             selected = phone;
 
@@ -108,7 +108,7 @@ public class MainViewController implements Initializable {
         controller.bar.setProgress(0);
 
         new Thread(() -> {
-            Set<String> groups = new HashSet<>(groupsList.getItems());
+            Set<String> groups = new HashSet<>(groupsList.getSelectionModel().getSelectedValues());
 
             Set<String> numbers = phone.getNumbers(groups).stream().map(n -> n.replaceAll("\\s+", "")).map(n -> {
                 if (n.startsWith("04")) {
