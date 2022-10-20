@@ -4,6 +4,7 @@ import dev.kreutz.smssender.shared.Const;
 import io.github.palexdev.materialfx.beans.NumberRange;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXCheckListView;
+import io.github.palexdev.materialfx.controls.MFXRadioButton;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog;
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder;
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog;
@@ -83,6 +84,14 @@ public class MainViewController implements Initializable {
                         controller.bar.getRanges1().add(NumberRange.of(0.0, 0.50));
                         controller.bar.getRanges2().add(NumberRange.of(0.51, 0.99));
                         controller.bar.getRanges3().add(NumberRange.of(0.99, 1.0));
+
+                        for (int i = 1; i < phones.getChildren().size(); i++) {
+                            MFXRadioButton button = (MFXRadioButton) phones.getChildren().get(i);
+                            if (phone.getName().compareTo(button.getText()) < 0) {
+                                phones.getChildren().add(i, controller.button);
+                                return;
+                            }
+                        }
 
                         phones.getChildren().add(controller.button);
                     });
