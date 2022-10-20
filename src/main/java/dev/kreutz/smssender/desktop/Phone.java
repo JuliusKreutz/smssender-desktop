@@ -38,6 +38,11 @@ public class Phone {
      */
     private boolean busy = false;
 
+    /**
+     * If the phone got cancelled
+     */
+    private boolean cancelled = false;
+
     public Phone(Socket socket) throws Exception {
         writer = new ObjectOutputStream(socket.getOutputStream());
         reader = new ObjectInputStream(socket.getInputStream());
@@ -59,12 +64,20 @@ public class Phone {
         return groups;
     }
 
-    public boolean isBusy() {
+    public boolean busy() {
         return busy;
+    }
+
+    public boolean cancelled() {
+        return cancelled;
     }
 
     public void setBusy(boolean busy) {
         this.busy = busy;
+    }
+
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 
     /**

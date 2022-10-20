@@ -31,6 +31,8 @@ public class MainViewController implements Initializable {
     @FXML
     public MFXButton sendButton;
     @FXML
+    public MFXButton cancelButton;
+    @FXML
     public MFXButton errorButton;
     @FXML
     public VBox phones;
@@ -78,7 +80,7 @@ public class MainViewController implements Initializable {
                             controller.button.setSelected(true);
                             groupsList.setItems(FXCollections.observableList(new ArrayList<>(phone.getGroups())));
 
-                            sendButton.setDisable(phone.isBusy());
+                            updateButtons();
                         });
 
                         controller.bar.getRanges1().add(NumberRange.of(0.0, 0.50));
@@ -105,20 +107,22 @@ public class MainViewController implements Initializable {
     @FXML
     public void send() {
         Phone phone = selected;
+        String text = textArea.getText();
+        Set<String> groups = new HashSet<>(groupsList.getSelectionModel().getSelectedValues());
 
-        if (phone == null) return;
-
-        if (!phone.setText(textArea.getText())) return;
+        if (!phone.setText(text)) {
+            errorButton.setVisible(true);
+            errors.add("Phone " + phone + " did not respond!");
+            return;
+        }
 
         phone.setBusy(true);
-        sendButton.setDisable(true);
+        updateButtons();
 
         PhoneButtonController controller = phoneControllers.get(phone);
         controller.bar.setProgress(0);
 
         new Thread(() -> {
-            Set<String> groups = new HashSet<>(groupsList.getSelectionModel().getSelectedValues());
-
             Set<String> numbers = phone.getNumbers(groups).stream().map(n -> n.replaceAll("\\s+", "")).map(n -> {
                 if (n.startsWith("04")) {
                     return n.replaceFirst("0", "+61");
@@ -129,6 +133,10 @@ public class MainViewController implements Initializable {
 
             int i = 1;
             for (String number : numbers) {
+                if (phone.cancelled()) {
+                    phone.setCancelled(false);
+                    break;
+                }
                 if (!phone.sendSms(number)) {
                     Platform.runLater(() -> errorButton.setVisible(true));
                     errors.add("ERROR: Sending sms from " + phone.getName() + " to " + number);
@@ -136,10 +144,16 @@ public class MainViewController implements Initializable {
                 controller.bar.setProgress((double) i++ / (double) numbers.size());
             }
 
+            controller.bar.setProgress(1);
             phone.setBusy(false);
 
-            if (phone == selected) Platform.runLater(() -> sendButton.setDisable(false));
+            Platform.runLater(this::updateButtons);
         }).start();
+    }
+
+    @FXML
+    public void cancel() {
+        selected.setCancelled(true);
     }
 
     @FXML
@@ -161,5 +175,14 @@ public class MainViewController implements Initializable {
 
         dialogContent.setMinSize(400, 200);
         dialog.showDialog();
+    }
+
+    private void updateButtons() {
+        Phone phone = selected;
+
+        sendButton.setManaged(!phone.busy());
+        sendButton.setVisible(!phone.busy());
+        cancelButton.setManaged(phone.busy());
+        cancelButton.setVisible(phone.busy());
     }
 }
