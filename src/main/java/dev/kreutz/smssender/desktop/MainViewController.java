@@ -133,10 +133,7 @@ public class MainViewController implements Initializable {
 
             int i = 1;
             for (String number : numbers) {
-                if (phone.cancelled()) {
-                    phone.setCancelled(false);
-                    break;
-                }
+                if (phone.cancelled()) break;
                 if (!phone.sendSms(number)) {
                     Platform.runLater(() -> errorButton.setVisible(true));
                     errors.add("ERROR: Sending sms from " + phone.getName() + " to " + number);
@@ -146,6 +143,7 @@ public class MainViewController implements Initializable {
 
             controller.bar.setProgress(1);
             phone.setBusy(false);
+            phone.setCancelled(false);
 
             Platform.runLater(this::updateButtons);
         }).start();
